@@ -1,0 +1,20 @@
+{
+  "name": "@vbarbarosh/bro",
+  "version": "0.0.0",
+  "description": "Execute JavaScript in context of a browser",
+  "main": "src/bro.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preinstall": "bin/npm-preinstall",
+    "postinstall": "bin/npm-postinstall"
+  },
+  "bin": {
+    "bro": "./src/bro.js"
+  },
+  "author": "Vladimir Barbarosh",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "puppeteer": "^0.11.0"
+  }
+}
