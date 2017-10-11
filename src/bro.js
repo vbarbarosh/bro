@@ -15,13 +15,14 @@ main().catch(panic);
 
 async function main()
 {
-    const [robot, ...urls] = args;
+    const [robot_pathname, ...urls] = args;
     Promise.promisifyAll(fs);
 
     // https://github.com/GoogleChrome/puppeteer/issues/290#issuecomment-322921352
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     try {
         const page = await browser.newPage();
+        const robot = await robot_from_file(robot_pathname);
         page.on('console', (...args) => console.log(...args));
         page.on('error', (...args) => console.error(...args));
         await page.exposeFunction('bro_read', read);
@@ -30,7 +31,7 @@ async function main()
         await page.exposeFunction('bro_basename', (...args) => path.basename(...args));
         for (let s of urls) {
             await page.goto(url_from_str(s)/*, {waitUntil: 'networkidle'}*/);
-            await page.evaluate(await read(robot));
+            await page.evaluate(robot);
         }
     }
     finally {
@@ -56,6 +57,15 @@ function url_from_str(str)
         return str;
     }
     return 'file://' + path.resolve(process.cwd(), str);
+}
+
+async function robot_from_file(pathname)
+{
+    const contents = await read(pathname);
+    if (contents.startsWith('#!')) {
+        return contents.slice((contents + '\n').indexOf('\n'));
+    }
+    return contents;
 }
 
 function read(pathname, opt = {})
