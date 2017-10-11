@@ -13,13 +13,3 @@ scriptname=`basename $script`
 d=`realpath $scriptdir/..`
 
 $d/bin/configure-npm
-
-if ! test -e $d/node_modules/.bin/phantomjs > /dev/null; then
-    echo error: phantomjs is required
-    exit 1
-fi
-
-if dpkg --compare-versions `$d/node_modules/.bin/phantomjs --version` lt 2.0; then
-    echo error: phantomjs at least 2.0 is required
-    exit 1
-fi
