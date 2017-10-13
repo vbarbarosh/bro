@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const fs = require('fs');
 const path = require('path');
+const microtime = require('microtime');
 
 const args = process.argv.slice(2);
 
@@ -25,6 +26,7 @@ async function main()
         const robot = await robot_from_file(robot_pathname);
         page.on('console', (...args) => console.log(...args));
         page.on('error', (...args) => console.error(...args));
+        await page.exposeFunction('bro_mkfts', mkfts);
         await page.exposeFunction('bro_read', read);
         await page.exposeFunction('bro_write', write);
         await page.exposeFunction('bro_dirname', (...args) => path.dirname(...args));
@@ -66,6 +68,15 @@ async function robot_from_file(pathname)
         return contents.slice((contents + '\n').indexOf('\n'));
     }
     return contents;
+}
+
+function mkfts()
+{
+    const now = new Date();
+    const [, micro] = microtime.nowStruct();
+    const a = now.toISOString().replace(/-|:/g, '').replace('T', '_').substr(0, 15);
+    const b = ('000000' + micro).substr(-6);
+    return a + '_' + b;
 }
 
 function read(pathname, opt = {})
