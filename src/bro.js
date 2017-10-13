@@ -7,6 +7,7 @@ const path = require('path');
 const microtime = require('microtime');
 
 const args = process.argv.slice(2);
+let current_url;
 
 if (args.length < 2) {
     usage();
@@ -26,13 +27,10 @@ async function main()
         const robot = await robot_from_file(robot_pathname);
         page.on('console', (...args) => console.log(...args));
         page.on('error', (...args) => console.error(...args));
-        await page.exposeFunction('bro_mkfts', mkfts);
         await page.exposeFunction('bro_read', read);
         await page.exposeFunction('bro_write', write);
-        await page.exposeFunction('bro_dirname', (...args) => path.dirname(...args));
-        await page.exposeFunction('bro_basename', (...args) => path.basename(...args));
-        for (let s of urls) {
-            await page.goto(url_from_str(s)/*, {waitUntil: 'networkidle'}*/);
+        for (current_url of urls.map(url_from_str)) {
+            await page.goto(current_url/*, {waitUntil: 'networkidle'}*/);
             await page.evaluate(robot);
         }
     }
@@ -79,12 +77,32 @@ function mkfts()
     return a + '_' + b;
 }
 
-function read(pathname, opt = {})
+async function read(pathname, opt = {})
 {
-    return fs.readFileAsync(pathname, {encoding: 'utf8', ...opt});
+    return await fs.readFileAsync(pathname, {encoding: 'utf8', ...opt});
 }
 
-function write(pathname, contents, opt = {})
+async function exists(pathname)
 {
-    return fs.writeFileAsync(pathname, contents, {encoding: 'utf8', ...opt});
+    try {
+        await fs.accessAsync(pathname, fs.constants.F_OK);
+    }
+    catch (error) {
+        return false;
+    }
+    return true;
+}
+
+async function write(pathname, contents, opt = {})
+{
+    if (pathname.startsWith('file://')) {
+        pathname = pathname.slice(7);
+    }
+    else {
+        pathname = path.basename(current_url);
+    }
+    if (await exists(pathname)) {
+        await fs.renameAsync(pathname, path.join(path.dirname(pathname), mkfts() + '-' + path.basename(pathname)));
+    }
+    return await fs.writeFileAsync(pathname, contents, {encoding: 'utf8', ...opt});
 }

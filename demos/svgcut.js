@@ -6,10 +6,7 @@ async function main()
 {
     const elem = document.querySelector('svg');
     svgcut(elem);
-    const fts = await bro_mkfts();
-    const basename = await bro_basename(location.href);
-    const pathname = `${fts}-${basename}`;
-    await bro_write(pathname, svg_from_elem(elem));
+    await bro_write(location.href, svg_from_elem(elem));
 }
 
 function svgcut(elem)

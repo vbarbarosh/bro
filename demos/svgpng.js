@@ -5,11 +5,12 @@ main();
 async function main()
 {
     const elem = document.querySelector('svg');
-    const dataurl = await dataurl_from_svg(svg_from_elem(elem))
-        .then(img_from_url)
-        .then(img_conv);
-    const filename = await bro_basename(location.href, '.svg') + '.png';
-    await bro_write(filename, base64_from_dataurl(dataurl), {encoding: 'base64'});
+    const dataurl = await dataurl_from_svg(svg_from_elem(elem)).then(img_from_url).then(img_conv);
+    await bro_write(
+        location.href.replace(/\.svg$/, '') + '.png',
+        base64_from_dataurl(dataurl),
+        {encoding: 'base64'}
+    );
 }
 
 function svg_from_elem(elem)
