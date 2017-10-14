@@ -103,7 +103,7 @@ async function backup(pathname)
         pathname = pathname.slice(7);
     }
     else {
-        pathname = path.basename(current_url);
+        pathname = path.basename(pathname);
     }
     if (await exists(pathname)) {
         await fs.renameAsync(pathname, path.join(path.dirname(pathname), mkfts() + '-' + path.basename(pathname)));
