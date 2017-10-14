@@ -33,6 +33,9 @@ async function main()
         await page.exposeFunction('bro_pdf', async function (pathname, opt = {}) {
             await page.pdf({path: await backup(pathname), ...opt});
         });
+        await page.exposeFunction('bro_screenshot', async function (pathname, opt = {}) {
+            await page.screenshot({path: await backup(pathname), ...opt});
+        });
         for (current_url of urls.map(url_from_str)) {
             await page.goto(current_url/*, {waitUntil: 'networkidle'}*/);
             await page.evaluate(robot);
