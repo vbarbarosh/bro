@@ -103,10 +103,16 @@ async function backup(pathname)
     if (pathname.startsWith('file://')) {
         pathname = pathname.slice(7);
     }
-    else {
-        pathname = path.basename(pathname);
-    }
+    // ?gws_rd=ssl.pdf -> gws_rd=ssl.pdf
     pathname = sanitize_filename(pathname);
+    // .pdf -> bro.pdf
+    if (pathname.match(/^\.[^.]*$/)) {
+        pathname = 'bro' + pathname;
+    }
+    // '' -> bro.out
+    if (pathname == '') {
+        pathname = 'bro.out';
+    }
     if (await exists(pathname)) {
         await fs.renameAsync(pathname, path.join(path.dirname(pathname), mkfts() + '-' + path.basename(pathname)));
     }
