@@ -5,6 +5,7 @@ const Promise = require('bluebird');
 const fs = require('fs');
 const path = require('path');
 const microtime = require('microtime');
+const sanitize_filename = require('sanitize-filename');
 
 const args = process.argv.slice(2);
 let current_url;
@@ -105,6 +106,7 @@ async function backup(pathname)
     else {
         pathname = path.basename(pathname);
     }
+    pathname = sanitize_filename(pathname);
     if (await exists(pathname)) {
         await fs.renameAsync(pathname, path.join(path.dirname(pathname), mkfts() + '-' + path.basename(pathname)));
     }
