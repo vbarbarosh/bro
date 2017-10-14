@@ -29,6 +29,9 @@ async function main()
         page.on('error', (...args) => console.error(...args));
         await page.exposeFunction('bro_read', read);
         await page.exposeFunction('bro_write', write);
+        await page.exposeFunction('bro_pdf', async function (pathname, opt = {}) {
+            await page.pdf({path: await backup(pathname), ...opt});
+        });
         for (current_url of urls.map(url_from_str)) {
             await page.goto(current_url/*, {waitUntil: 'networkidle'}*/);
             await page.evaluate(robot);
@@ -94,7 +97,7 @@ async function exists(pathname)
     return true;
 }
 
-async function write(pathname, contents, opt = {})
+async function backup(pathname)
 {
     if (pathname.startsWith('file://')) {
         pathname = pathname.slice(7);
@@ -105,5 +108,10 @@ async function write(pathname, contents, opt = {})
     if (await exists(pathname)) {
         await fs.renameAsync(pathname, path.join(path.dirname(pathname), mkfts() + '-' + path.basename(pathname)));
     }
-    return await fs.writeFileAsync(pathname, contents, {encoding: 'utf8', ...opt});
+    return pathname;
+}
+
+async function write(pathname, contents, opt = {})
+{
+    return await fs.writeFileAsync(await backup(pathname), contents, {encoding: 'utf8', ...opt});
 }
