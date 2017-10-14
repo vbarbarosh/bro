@@ -47,6 +47,7 @@ function usage()
 
 function panic(error)
 {
+    console.error(current_url);
     console.error(error);
     process.exit(1);
 }
