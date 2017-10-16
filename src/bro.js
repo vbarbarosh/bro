@@ -22,7 +22,7 @@ async function main()
     Promise.promisifyAll(fs);
 
     // https://github.com/GoogleChrome/puppeteer/issues/290#issuecomment-322921352
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], /*headless: false*/});
     try {
         const page = await browser.newPage();
         const robot = await robot_from_file(robot_pathname);
@@ -36,7 +36,12 @@ async function main()
         await page.exposeFunction('bro_screenshot', async function (pathname, opt = {}) {
             await page.screenshot({path: await backup(pathname), ...opt});
         });
-        for (current_url of urls.map(url_from_str)) {
+        await page.exposeFunction('bro_push', async function (...u) {
+            urls.push(...u);
+        });
+        for (let i = 0; i < urls.length; ++i) {
+            current_url = url_from_str(urls[i]);
+            // console.log('-->', current_url);
             await page.goto(current_url/*, {waitUntil: 'networkidle'}*/);
             await page.evaluate(robot);
         }
