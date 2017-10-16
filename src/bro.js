@@ -61,6 +61,9 @@ function panic(error)
 
 function url_from_str(str)
 {
+    if (str == ':' || str == 'about:blank') {
+        return 'about:blank';
+    }
     if (str.match(/^http/)) {
         return str;
     }
