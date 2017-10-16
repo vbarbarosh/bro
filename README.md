@@ -1,5 +1,10 @@
 Execute JavaScript in context of a browser
 
+## Goals
+
+1) Execute JavaScript on a page, store results in a file.
+2) Harvest urls which are spread across several pages.
+
 ## Before Install
 
 * [npm install -g puppeteer fails #375](https://github.com/GoogleChrome/puppeteer/issues/375)
