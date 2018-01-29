@@ -39,6 +39,9 @@ async function main()
         await page.exposeFunction('bro_push', async function (...u) {
             urls.push(...u);
         });
+        await page.exposeFunction('bro_wait', async function () {
+            return await page.waitForNavigation({waitUntil: 'networkidle'});
+        });
         for (let i = 0; i < urls.length; ++i) {
             current_url = url_from_str(urls[i]);
             // console.log('-->', current_url);
