@@ -28,6 +28,10 @@ async function main()
         const robot = await robot_from_file(robot_pathname);
         page.on('console', (...args) => console.log(...args));
         page.on('error', (...args) => console.error(...args));
+        page.on('dialog', async dialog => {
+            console.log('--> dialog', dialog.message());
+            await dialog.dismiss();
+        });
         await page.exposeFunction('bro_read', read);
         await page.exposeFunction('bro_write', write);
         await page.exposeFunction('bro_pdf', async function (pathname, opt = {}) {
