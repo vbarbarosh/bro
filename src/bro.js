@@ -39,6 +39,9 @@ async function main()
         await page.exposeFunction('bro_push', async function (...u) {
             urls.push(...u);
         });
+        await page.exposeFunction('bro_viewport', async function (...args) {
+            await page.setViewport(...args);
+        });
         await page.exposeFunction('bro_wait', async function () {
             return await page.waitForNavigation({waitUntil: 'networkidle'});
         });
