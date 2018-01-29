@@ -10,5 +10,5 @@ async function main()
     const width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
     // +1 is necessary to avoid last empty page
     const height = 1 + Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    await bro_pdf(location.href.replace(/\.[^.]+$/, '') + '.pdf', {width, height, printBackground: true});
+    await bro_pdf(location.href + '.pdf', {width, height, printBackground: true});
 }
